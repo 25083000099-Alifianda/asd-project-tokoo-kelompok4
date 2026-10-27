@@ -58,40 +58,87 @@ def menu_tampilkan_semua():
     print(produk.tampilkan_semua_produk())
 
 
+
 # ---------------------------------------------------------------
 # F3: Cari produk
 # ---------------------------------------------------------------
 def menu_cari_produk():
-    """F3: pilih mode pencarian, minta kata kunci, tampilkan hasil."""
+    """Mencari produk berdasarkan kode atau nama."""
     print("\n=== Cari Produk ===")
+    print("-" * 30)
     print("1. Cari berdasarkan kode")
     print("2. Cari berdasarkan nama")
-    pilihan = input("Pilih mode (1/2): ").strip()
+    print("0. Kembali")
+
+    pilihan = input("Pilih menu (0-2): ").strip()
+
+    if pilihan == "0":
+        print("Kembali ke menu utama.")
+        return
 
     if pilihan == "1":
         mode = "kode"
     elif pilihan == "2":
         mode = "nama"
     else:
-        print("Pilihan mode tidak valid. Masukkan 1 atau 2.")
+        print("Pilihan tidak valid. Silakan pilih 0, 1, atau 2.")
         return
 
-    kata_kunci = input(f"Masukkan {mode} produk: ")
+    kata_kunci = input(
+        f"Masukkan {mode} produk yang dicari: "
+    ).strip()
+
+    if not kata_kunci:
+        print("Kata kunci pencarian tidak boleh kosong.")
+        return
+
     _, pesan = produk.cari_produk(mode, kata_kunci)
-    print()
+
+    print("\n" + "=" * 30)
+    print("HASIL PENCARIAN".center(30))
+    print("=" * 30)
     print(pesan)
+
 
 
 # ---------------------------------------------------------------
 # F4: Update stok
 # ---------------------------------------------------------------
 def menu_update_stok():
-    """F4: minta kode dan stok baru, kirim ke produk.update_stok."""
+    """Memperbarui stok produk dengan validasi input."""
     print("\n=== Update Stok Produk ===")
-    kode = input("Kode produk      : ")
-    stok_baru = input("Jumlah stok baru : ")
+    print("-" * 35)
 
-    _, pesan = produk.update_stok(kode, stok_baru)
+    kode = input("Kode produk        : ").strip()
+
+    if not kode:
+        print("Kode produk tidak boleh kosong.")
+        return
+
+    # Periksa apakah produk tersedia
+    index = produk.cari_index_by_kode(kode)
+
+    if index == -1:
+        print(f"Produk dengan kode '{kode}' tidak ditemukan.")
+        return
+
+    # Tampilkan informasi stok saat ini
+    data_produk = produk.daftar_produk[index]
+    print(f"Nama produk        : {data_produk['nama']}")
+    print(f"Stok saat ini      : {data_produk['stok']}")
+
+    stok_baru = input("Masukkan stok baru : ").strip()
+
+    if not stok_baru:
+        print("Stok baru tidak boleh kosong.")
+        return
+
+    # Kirim perubahan ke fungsi pada produk.py
+    berhasil, pesan = produk.update_stok(kode, stok_baru)
+
+    print("\n" + "=" * 35)
+    print("HASIL UPDATE STOK".center(35))
+    print("=" * 35)
     print(pesan)
 
 
