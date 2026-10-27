@@ -99,9 +99,13 @@ def menu_update_stok():
 # F5: Update harga
 # ---------------------------------------------------------------
 def menu_update_harga():
-    # TODO (anggota lain): F5 Update Harga
-    print("\nFitur Update Harga belum tersedia.")
+    """F5: minta kode dan harga baru, kirim ke produk.update_harga."""
+    print("\n=== Update Harga Produk ===")
+    kode = input("Kode produk  : ")
+    harga_baru = input("Harga baru   : ")
 
+    _, pesan = produk.update_harga(kode, harga_baru)
+    print(pesan)
 
 def menu_hapus_produk():
     # TODO (anggota lain): F6 Hapus Produk

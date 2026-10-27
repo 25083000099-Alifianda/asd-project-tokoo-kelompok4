@@ -7,6 +7,7 @@ Isi file ini:
 - F2 tampilkan_semua_produk : menampilkan semua produk dalam bentuk tabel
 - F3 cari_produk      : mencari produk berdasarkan kode (exact) atau nama (partial)
 - F4 update_stok      : mengganti stok produk dengan nilai baru
+- F5 update_harga     : mengganti harga produk dengan nilai baru
 
 Fitur F3 sampai F6 ditambahkan oleh anggota kelompok lain di bawah bagian F2.
 """
@@ -207,3 +208,28 @@ def update_stok(kode, stok_baru):
     item["stok"] = stok_valid
     return True, (f"Stok produk {item['nama']} berhasil diperbarui: "
                   f"{stok_lama} menjadi {stok_valid}")
+
+
+# ---------------------------------------------------------------
+# F5: Update harga
+# ---------------------------------------------------------------
+def update_harga(kode, harga_baru):
+    """Ganti harga produk dengan nilai baru.
+    Return (berhasil, pesan)."""
+    kode = kode.strip()
+    if not kode:
+        return False, "Kode produk tidak boleh kosong"
+
+    index = cari_index_by_kode(kode)
+    if index == -1:
+        return False, f"Produk dengan kode '{kode}' tidak ditemukan."
+
+    harga_valid, error = parse_harga(harga_baru)
+    if error:
+        return False, error
+
+    item = daftar_produk[index]
+    harga_lama = item["harga"]
+    item["harga"] = harga_valid
+    return True, (f"Harga produk {item['nama']} berhasil diperbarui: "
+                  f"{format_rupiah(harga_lama)} menjadi {format_rupiah(harga_valid)}")
