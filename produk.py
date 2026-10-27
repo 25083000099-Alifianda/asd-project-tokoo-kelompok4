@@ -233,3 +233,31 @@ def update_harga(kode, harga_baru):
     item["harga"] = harga_valid
     return True, (f"Harga produk {item['nama']} berhasil diperbarui: "
                   f"{format_rupiah(harga_lama)} menjadi {format_rupiah(harga_valid)}")
+
+# ---------------------------------------------------------------
+# F6: Hapus produk
+# ---------------------------------------------------------------
+def hapus_produk(kode):
+    """Hapus produk berdasarkan kode.
+    Return (berhasil, pesan)."""
+
+    kode = kode.strip()
+
+    # Validasi: kode tidak boleh kosong
+    if not kode:
+        return False, "Kode produk tidak boleh kosong."
+
+    # Cari produk berdasarkan kode
+    index = cari_index_by_kode(kode)
+
+    # Validasi: produk harus ditemukan
+    if index == -1:
+        return False, f"Produk dengan kode '{kode}' tidak ditemukan."
+
+    # Simpan nama sebelum produk dihapus
+    nama = daftar_produk[index]["nama"]
+
+    # Hapus produk dari list
+    daftar_produk.pop(index)
+
+    return True, f"Produk {nama} berhasil dihapus dari sistem."

@@ -107,9 +107,45 @@ def menu_update_harga():
     _, pesan = produk.update_harga(kode, harga_baru)
     print(pesan)
 
+
+# ---------------------------------------------------------------
+# F6: Hapus produk
+# ---------------------------------------------------------------
 def menu_hapus_produk():
-    # TODO (anggota lain): F6 Hapus Produk
-    print("\nFitur Hapus Produk belum tersedia.")
+    """Meminta konfirmasi sebelum menghapus produk."""
+
+    print("\n=== Hapus Produk ===")
+    kode = input("Kode produk yang akan dihapus: ").strip()
+
+    # Validasi kode kosong
+    if not kode:
+        print("Kode produk tidak boleh kosong.")
+        return
+
+    # Periksa apakah produk tersedia
+    index = produk.cari_index_by_kode(kode)
+
+    if index == -1:
+        print(f"Produk dengan kode '{kode}' tidak ditemukan.")
+        return
+
+    # Tampilkan nama produk sebelum konfirmasi
+    nama = produk.daftar_produk[index]["nama"]
+    print(f"Produk yang akan dihapus: {nama}")
+
+    # Minta konfirmasi pengguna
+    konfirmasi = input(
+        "Yakin ingin menghapus produk ini? (y/n): "
+    ).strip().lower()
+
+    if konfirmasi != "y":
+        print("Penghapusan dibatalkan.")
+        return
+
+    # Jalankan fungsi penghapusan pada produk.py
+    berhasil, pesan = produk.hapus_produk(kode)
+    print(pesan)
+
 
 
 # ---------------------------------------------------------------
