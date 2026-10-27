@@ -8,8 +8,8 @@ Isi file ini:
 - F3 cari_produk      : mencari produk berdasarkan kode (exact) atau nama (partial)
 - F4 update_stok      : mengganti stok produk dengan nilai baru
 - F5 update_harga     : mengganti harga produk dengan nilai baru
+- F6 hapus_produk     : menghapus produk berdasarkan kode
 
-Fitur F3 sampai F6 ditambahkan oleh anggota kelompok lain di bawah bagian F2.
 """
 
 # Array of Struct: seluruh produk disimpan di sini (hilang saat program ditutup)
@@ -157,57 +157,98 @@ def tampilkan_semua_produk():
     return buat_tabel_produk(daftar_produk)
 
 
+
 # ---------------------------------------------------------------
 # F3: Cari produk
 # ---------------------------------------------------------------
 def cari_produk(mode, kata_kunci):
-    """Cari produk. mode: 'kode' (exact match) atau 'nama' (partial match).
-    Return (berhasil, pesan). Jika berhasil, pesan berisi tabel + jumlah hasil."""
+    """Cari produk berdasarkan kode atau nama.
+    Return (berhasil, pesan).
+    Kode dicari secara tepat, nama dicari sebagian.
+    """
+    # Validasi mode pencarian
+    mode = mode.strip().casefold()
+    if mode not in ("kode", "nama"):
+        return False, "Mode pencarian tidak valid. Gunakan 'kode' atau 'nama'."
+
+    # Validasi kata kunci
     kata_kunci = kata_kunci.strip()
     if not kata_kunci:
-        return False, "Kata kunci tidak boleh kosong"
+        return False, "Kata kunci pencarian tidak boleh kosong."
 
     hasil = []
+
     if mode == "kode":
+        # Kode harus cocok secara tepat
         index = cari_index_by_kode(kata_kunci)
         if index != -1:
             hasil.append(daftar_produk[index])
-    else:
+
+    elif mode == "nama":
+        # Nama mendukung pencarian sebagian dan mengabaikan kapital
         kunci = kata_kunci.casefold()
         for item in daftar_produk:
             if kunci in item["nama"].casefold():
                 hasil.append(item)
 
+    # Tampilkan pesan jika tidak ditemukan
     if not hasil:
-        return False, f"Produk dengan {mode} '{kata_kunci}' tidak ditemukan."
+        return False, (
+            f"Produk dengan {mode} '{kata_kunci}' "
+            "tidak ditemukan."
+        )
 
+    # Susun tabel hasil pencarian
     tabel = buat_tabel_produk(hasil)
-    return True, f"{tabel}\n\nDitemukan {len(hasil)} produk."
+    jumlah = len(hasil)
+
+    return True, (
+        f"HASIL PENCARIAN BERDASARKAN {mode.upper()}\n"
+        f"{tabel}\n\n"
+        f"Total produk ditemukan: {jumlah}"
+    )
+
 
 
 # ---------------------------------------------------------------
 # F4: Update stok
 # ---------------------------------------------------------------
 def update_stok(kode, stok_baru):
-    """Ganti stok produk dengan nilai baru (bukan penambahan).
-    Return (berhasil, pesan)."""
+    """Memperbarui stok produk dengan nilai baru.
+    Return (berhasil, pesan).
+    """
+    # Validasi kode
     kode = kode.strip()
     if not kode:
-        return False, "Kode produk tidak boleh kosong"
+        return False, "Kode produk tidak boleh kosong."
 
+    # Pastikan produk tersedia
     index = cari_index_by_kode(kode)
     if index == -1:
         return False, f"Produk dengan kode '{kode}' tidak ditemukan."
+
+    # Validasi stok baru
+    if isinstance(stok_baru, str):
+        stok_baru = stok_baru.strip()
+
+    if stok_baru == "":
+        return False, "Stok baru tidak boleh kosong."
 
     stok_valid, error = parse_stok(stok_baru)
     if error:
         return False, error
 
+    # Perbarui stok setelah semua validasi berhasil
     item = daftar_produk[index]
     stok_lama = item["stok"]
+
     item["stok"] = stok_valid
-    return True, (f"Stok produk {item['nama']} berhasil diperbarui: "
-                  f"{stok_lama} menjadi {stok_valid}")
+
+    return True, (
+        f"Stok produk '{item['nama']}' berhasil diperbarui.\n"
+        f"Stok sebelumnya : {stok_lama}\n"
+        f"Stok sekarang   : {stok_valid}"
+    )
 
 
 # ---------------------------------------------------------------
@@ -233,6 +274,7 @@ def update_harga(kode, harga_baru):
     item["harga"] = harga_valid
     return True, (f"Harga produk {item['nama']} berhasil diperbarui: "
                   f"{format_rupiah(harga_lama)} menjadi {format_rupiah(harga_valid)}")
+
 
 # ---------------------------------------------------------------
 # F6: Hapus produk
