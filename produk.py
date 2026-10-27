@@ -5,7 +5,8 @@ Modul data produk (Tahap 1: Array of Struct).
 Isi file ini:
 - F1 tambah_produk   : menambah produk baru (dengan validasi)
 - F2 tampilkan_semua_produk : menampilkan semua produk dalam bentuk tabel
-- F3 
+- F3 cari_produk      : mencari produk berdasarkan kode (exact) atau nama (partial)
+- F4 update_stok      : mengganti stok produk dengan nilai baru
 
 Fitur F3 sampai F6 ditambahkan oleh anggota kelompok lain di bawah bagian F2.
 """
@@ -154,3 +155,55 @@ def tampilkan_semua_produk():
         return "Belum ada produk yang tersimpan."
     return buat_tabel_produk(daftar_produk)
 
+
+# ---------------------------------------------------------------
+# F3: Cari produk
+# ---------------------------------------------------------------
+def cari_produk(mode, kata_kunci):
+    """Cari produk. mode: 'kode' (exact match) atau 'nama' (partial match).
+    Return (berhasil, pesan). Jika berhasil, pesan berisi tabel + jumlah hasil."""
+    kata_kunci = kata_kunci.strip()
+    if not kata_kunci:
+        return False, "Kata kunci tidak boleh kosong"
+
+    hasil = []
+    if mode == "kode":
+        index = cari_index_by_kode(kata_kunci)
+        if index != -1:
+            hasil.append(daftar_produk[index])
+    else:
+        kunci = kata_kunci.casefold()
+        for item in daftar_produk:
+            if kunci in item["nama"].casefold():
+                hasil.append(item)
+
+    if not hasil:
+        return False, f"Produk dengan {mode} '{kata_kunci}' tidak ditemukan."
+
+    tabel = buat_tabel_produk(hasil)
+    return True, f"{tabel}\n\nDitemukan {len(hasil)} produk."
+
+
+# ---------------------------------------------------------------
+# F4: Update stok
+# ---------------------------------------------------------------
+def update_stok(kode, stok_baru):
+    """Ganti stok produk dengan nilai baru (bukan penambahan).
+    Return (berhasil, pesan)."""
+    kode = kode.strip()
+    if not kode:
+        return False, "Kode produk tidak boleh kosong"
+
+    index = cari_index_by_kode(kode)
+    if index == -1:
+        return False, f"Produk dengan kode '{kode}' tidak ditemukan."
+
+    stok_valid, error = parse_stok(stok_baru)
+    if error:
+        return False, error
+
+    item = daftar_produk[index]
+    stok_lama = item["stok"]
+    item["stok"] = stok_valid
+    return True, (f"Stok produk {item['nama']} berhasil diperbarui: "
+                  f"{stok_lama} menjadi {stok_valid}")

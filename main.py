@@ -59,18 +59,45 @@ def menu_tampilkan_semua():
 
 
 # ---------------------------------------------------------------
-# Iki fitur 3-6 diganti/di isi sesuai fiturmu,mbok delete moro mbok copas tekmu yo rapopo 
+# F3: Cari produk
 # ---------------------------------------------------------------
 def menu_cari_produk():
-    # TODO (anggota lain): F3 Cari Produk
-    print("\nFitur Cari Produk belum tersedia.")
+    """F3: pilih mode pencarian, minta kata kunci, tampilkan hasil."""
+    print("\n=== Cari Produk ===")
+    print("1. Cari berdasarkan kode")
+    print("2. Cari berdasarkan nama")
+    pilihan = input("Pilih mode (1/2): ").strip()
+
+    if pilihan == "1":
+        mode = "kode"
+    elif pilihan == "2":
+        mode = "nama"
+    else:
+        print("Pilihan mode tidak valid. Masukkan 1 atau 2.")
+        return
+
+    kata_kunci = input(f"Masukkan {mode} produk: ")
+    _, pesan = produk.cari_produk(mode, kata_kunci)
+    print()
+    print(pesan)
 
 
+# ---------------------------------------------------------------
+# F4: Update stok
+# ---------------------------------------------------------------
 def menu_update_stok():
-    # TODO (anggota lain): F4 Update Stok
-    print("\nFitur Update Stok belum tersedia.")
+    """F4: minta kode dan stok baru, kirim ke produk.update_stok."""
+    print("\n=== Update Stok Produk ===")
+    kode = input("Kode produk      : ")
+    stok_baru = input("Jumlah stok baru : ")
+
+    _, pesan = produk.update_stok(kode, stok_baru)
+    print(pesan)
 
 
+# ---------------------------------------------------------------
+# F5: Update harga
+# ---------------------------------------------------------------
 def menu_update_harga():
     # TODO (anggota lain): F5 Update Harga
     print("\nFitur Update Harga belum tersedia.")
